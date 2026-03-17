@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Problem: Toxic Flow on Older Exchanges</title>
+    <title>The Solution: Hybrid Markets on Archer</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #050505;
             --panel-bg: #111111;
+            --card-bg: #1a1a1a;
             --ask-text: #F35962;
             --ask-bg: rgba(243, 89, 98, 0.15);
             --bid-text: #56B784;
@@ -18,6 +19,7 @@
             --border-white: rgba(255, 255, 255, 0.05);
             --toxic-color: #F35962;
             --genuine-color: #56B784;
+            --archer-color: #3B82F6;
         }
         
         * {
@@ -42,6 +44,16 @@
             text-align: center;
             margin-bottom: 60px;
             max-width: 800px;
+        }
+
+        .tag {
+            color: var(--archer-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-weight: 700;
         }
 
         .header h1 {
@@ -89,7 +101,7 @@
                 flex-direction: column;
                 justify-content: space-between;
                 width: 280px;
-                padding: 20px 0;
+                padding: 40px 0;
             }
         }
 
@@ -213,21 +225,11 @@
         .panel {
             background-color: var(--panel-bg);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             overflow: hidden;
             width: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
             position: relative;
-        }
-
-        /* Subtle red glow indicating toxic flow taking over */
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 60px rgba(243, 89, 98, 0.05);
-            pointer-events: none;
-            z-index: 10;
         }
 
         .panel-header {
@@ -237,7 +239,7 @@
         }
 
         .panel-title {
-            color: var(--text-white);
+            color: var(--archer-color);
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
             letter-spacing: 0.1em;
@@ -247,16 +249,56 @@
         }
 
         .panel-subtitle {
-            color: var(--ask-text);
+            color: var(--text-white);
             font-size: 18px;
             font-weight: 500;
             letter-spacing: -0.01em;
         }
 
-        .orderbook {
-            padding: 16px 0;
+        /* Mini Order Books */
+        .panel-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mini-ob {
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        .toxic-ob {
+            border-color: rgba(243, 89, 98, 0.2);
+        }
+
+        .genuine-ob {
+            border-color: rgba(86, 183, 132, 0.2);
+        }
+
+        .mini-ob-header {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        .mini-ob-title {
+            font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .toxic-ob .mini-ob-title { color: var(--toxic-color); }
+        .genuine-ob .mini-ob-title { color: var(--genuine-color); }
+
+        .orderbook {
+            padding: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .ob-group {
@@ -292,8 +334,9 @@
             z-index: 1;
             display: flex;
             justify-content: space-between;
-            padding: 6px 24px;
+            padding: 4px 16px;
             color: var(--text-muted);
+            font-size: 13px;
         }
 
         .text-ask { color: var(--ask-text); }
@@ -303,52 +346,54 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px 0;
-            margin: 4px 0;
+            padding: 8px 0;
+            margin: 2px 0;
             position: relative;
         }
 
         .spread-line {
             position: absolute;
-            left: 24px;
-            right: 24px;
+            left: 16px;
+            right: 16px;
             height: 1px;
             background-color: rgba(255, 255, 255, 0.1);
         }
 
         .spread-badge {
-            background-color: var(--panel-bg);
-            padding: 0 16px;
+            background-color: #0a0a0a;
+            padding: 2px 12px;
             position: relative;
             z-index: 10;
             color: var(--text-white);
-            font-size: 20px;
+            font-size: 14px;
             font-weight: 700;
             font-family: 'Inter', sans-serif;
+            border-radius: 4px;
         }
 
         .explanation {
             margin-top: 40px;
-            background-color: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
+            background-color: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
             max-width: 800px;
             text-align: center;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.9);
             font-size: 15px;
             line-height: 1.6;
         }
 
         .explanation strong {
-            color: var(--text-white);
+            color: var(--archer-color);
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>The Problem with Older Exchanges</h1>
-        <p>They cannot distinguish flow. Toxic bots and genuine users are mixed together, forcing market makers to widen quotes to survive.</p>
+        <div class="tag">The Solution</div>
+        <h1>Hybrid markets on Archer.</h1>
+        <p>Hybrid markets allows market makers to segment order flow fully on-chain and provide tighter spreads <strong>ONLY</strong> to retail users who are genuine traders.</p>
     </div>
 
     <div class="visual-container">
@@ -380,7 +425,7 @@
 
         <!-- Desktop Arrows (Right) -->
         <div class="arrows-container">
-            <svg class="arrows-svg" viewBox="0 0 150 400" preserveAspectRatio="none">
+            <svg class="arrows-svg" viewBox="0 0 150 500" preserveAspectRatio="none">
                 <defs>
                     <marker id="arrow-toxic" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--toxic-color)" />
@@ -389,76 +434,150 @@
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--genuine-color)" />
                     </marker>
                 </defs>
-                <!-- Path from Toxic (top left) to middle right -->
-                <path class="flow-path toxic-path" d="M 0 80 C 75 80, 75 200, 140 200" marker-end="url(#arrow-toxic)" />
-                <!-- Path from Genuine (bottom left) to middle right -->
-                <path class="flow-path genuine-path" d="M 0 320 C 75 320, 75 200, 140 200" marker-end="url(#arrow-genuine)" />
+                <!-- Path from Toxic (top left) to Top OB (Toxic Pricing) -->
+                <path class="flow-path toxic-path" d="M 0 110 C 75 110, 75 150, 150 150" marker-end="url(#arrow-toxic)" />
+                <!-- Path from Genuine (bottom left) to Bottom OB (Genuine Pricing) -->
+                <path class="flow-path genuine-path" d="M 0 310 C 75 310, 75 380, 150 380" marker-end="url(#arrow-genuine)" />
             </svg>
         </div>
 
-        <!-- Order Book (Older Exchange) -->
+        <!-- Order Book (Archer Hybrid Markets) -->
         <div class="exchange-container">
             <div class="panel">
                 <div class="panel-header">
-                    <h2 class="panel-title">Older Exchanges</h2>
-                    <div class="panel-subtitle">Forced to Widen Quotes</div>
+                    <h2 class="panel-title">Archer Hybrid Markets</h2>
+                    <div class="panel-subtitle">Segmented On-Chain Liquidity</div>
                 </div>
-                <div class="orderbook">
-                    <!-- Asks -->
-                    <div class="ob-group">
-                        <div class="ob-row">
-                            <div class="depth-bar-ask" style="width: 100%;"></div>
-                            <div class="row-content">
-                                <span class="text-ask">100.030</span>
-                                <span>1,420</span>
-                            </div>
-                        </div>
-                        <div class="ob-row">
-                            <div class="depth-bar-ask" style="width: 65%;"></div>
-                            <div class="row-content">
-                                <span class="text-ask">100.020</span>
-                                <span>980</span>
-                            </div>
-                        </div>
-                        <div class="ob-row">
-                            <div class="depth-bar-ask" style="width: 30%;"></div>
-                            <div class="row-content">
-                                <span class="text-ask">100.010</span>
-                                <span>560</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="panel-body">
                     
-                    <!-- Spread -->
-                    <div class="spread-container">
-                        <div class="spread-line"></div>
-                        <div class="spread-badge">2.0 bps</div>
+                    <!-- Toxic Pricing OB -->
+                    <div class="mini-ob toxic-ob">
+                        <div class="mini-ob-header">
+                            <span class="mini-ob-title">Aggregator / Bot Pricing</span>
+                        </div>
+                        <div class="orderbook">
+                            <!-- Asks -->
+                            <div class="ob-group">
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 100%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.030</span>
+                                        <span>1,420</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 65%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.020</span>
+                                        <span>980</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 30%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.010</span>
+                                        <span>560</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Spread -->
+                            <div class="spread-container">
+                                <div class="spread-line"></div>
+                                <div class="spread-badge">2.0 bps</div>
+                            </div>
+
+                            <!-- Bids -->
+                            <div class="ob-group">
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 30%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">99.990</span>
+                                        <span>560</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 65%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">99.980</span>
+                                        <span>980</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 100%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">99.970</span>
+                                        <span>1,420</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Bids -->
-                    <div class="ob-group">
-                        <div class="ob-row">
-                            <div class="depth-bar-bid" style="width: 30%;"></div>
-                            <div class="row-content">
-                                <span class="text-bid">99.990</span>
-                                <span>560</span>
-                            </div>
+                    <!-- Genuine Pricing OB -->
+                    <div class="mini-ob genuine-ob">
+                        <div class="mini-ob-header">
+                            <span class="mini-ob-title">Retail / UI Pricing</span>
                         </div>
-                        <div class="ob-row">
-                            <div class="depth-bar-bid" style="width: 65%;"></div>
-                            <div class="row-content">
-                                <span class="text-bid">99.980</span>
-                                <span>980</span>
+                        <div class="orderbook">
+                            <!-- Asks -->
+                            <div class="ob-group">
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 100%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.015</span>
+                                        <span>1,420</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 65%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.010</span>
+                                        <span>980</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-ask" style="width: 30%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-ask">100.005</span>
+                                        <span>560</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ob-row">
-                            <div class="depth-bar-bid" style="width: 100%;"></div>
-                            <div class="row-content">
-                                <span class="text-bid">99.970</span>
-                                <span>1,420</span>
+                            
+                            <!-- Spread -->
+                            <div class="spread-container">
+                                <div class="spread-line"></div>
+                                <div class="spread-badge">0.5 bps</div>
+                            </div>
+
+                            <!-- Bids -->
+                            <div class="ob-group">
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 30%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">100.000</span>
+                                        <span>560</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 65%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">99.995</span>
+                                        <span>980</span>
+                                    </div>
+                                </div>
+                                <div class="ob-row">
+                                    <div class="depth-bar-bid" style="width: 100%;"></div>
+                                    <div class="row-content">
+                                        <span class="text-bid">99.990</span>
+                                        <span>1,420</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -466,7 +585,7 @@
     </div>
 
     <div class="explanation">
-        <strong>The Result:</strong> Because the exchange cannot separate the flow, market makers assume the worst and widen their spreads to 2.0 bps to protect themselves from toxic bots. <strong>Genuine traders end up paying this hidden tax.</strong>
+        <strong>Composable Liquidity:</strong> Hybrid markets are composable, which means market makers can also serve the order flow from aggregators and other products at the same/higher price, using the same liquidity.
     </div>
 </body>
 </html>
